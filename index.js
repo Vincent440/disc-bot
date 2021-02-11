@@ -10,7 +10,31 @@ const { prefix } = require('./config.json')
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN
 // create a new Discord client
 const client = new Discord.Client()
-const dogImageApiURL = 'https://dog.ceo/api/breed'
+
+// Response for empty prefixed messages.
+const botHelpMessage = `**Command not found**
+
+*Please see the list of available commands*
+
+**Example**
+\`>help\` - *Help command lists all available commands*
+`
+// Command list of all available commands.
+const helpCommandList = `**cenzo BOT** *help* 
+
+**Command List**
+
+*Examples*
+\`>server\` - Displays current server information
+\`>user-info\` - Displays username and ID
+\`>avatar\` - Displays your avatar
+
+\`>joke\` - Tells a random joke
+\`>dog\` - Shows a random Dog image
+\`>cat\` - Shows a random Cat image
+\`>fox\` - Shows a random Fox image
+
+`
 const dadJokeApiURL = 'https://icanhazdadjoke.com/'
 const dadJokeApiConfig = {
   headers: {
@@ -18,42 +42,48 @@ const dadJokeApiConfig = {
     'User-Agent': 'DiscBot - vinceshury@gmail.com'
   }
 }
-// Response for empty prefixed messages.
-const botIntroMessage = `**Hello! I'm DiscBot**
-I will respond to messages that are prefixed by \`>command-name\`
 
-Example
-\`>help\` - Lists all available commands
-`
-// Command list of all available commands.
-const helpCommandList = `**DiscBot Command List**
-
-\`>server\` - Displays current server information
-\`>user-info\` - Displays username and ID
-\`>joke\` - Tells a random joke
-\`>dog\` - Shows a random Dog image
-\`>avatar\` - Displays your avatar
-
-`
+const catApiConfig = {
+  method: 'get',
+  url: 'https://api.thecatapi.com/v1/images/search',
+  headers: { 
+    'x-api-key': '1f77677c-c2de-4771-be2f-e01439d1c5ce'
+  }
+};
 // *Works In Progress*
 
 // Simple dad joke API
-const getDadJoke = () => axios.get(dadJokeApiURL, dadJokeApiConfig)
-const getRandomDogImage = () => axios.get(`${dogImageApiURL}s/image/random`)
+const getRandomDadJoke = () => axios.get(dadJokeApiURL, dadJokeApiConfig)
+const getRandomDogImage = () => axios.get('https://dog.ceo/api/breeds/image/random')
+const getRandomFoxImage = () => axios.get('https://randomfox.ca/floof/')
+const getRandomCatImage = () => axios(catApiConfig)
 
 // Connect to the Discord
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`)
+
 })
 
 client.on('message', message => {
+
+  const {bot: isAuthorBot, username} = message.author;
+
+  // Don't do anything on messages from this bot.
+  if (username === 'cenzo') return;
+
   console.log(
-    `#${message.channel.name}-@${message.author.username}#${message.author.discriminator}`
+    `#${message.channel.name}
+      @${message.author.username}#${message.author.discriminator}`
   )
   console.log(message.cleanContent)
   console.log('-'.repeat(20))
 
-  const newMessage = message.content.toLowerCase()
+  // No further action if the message is from another bot.
+  if (isAuthorBot === true) return;
+  
+  
+  const newMessage = message.content.toLowerCase().trim()
+  if(newMessage[0] !== prefix) return;
 
   switch (newMessage) {
     case `${prefix}help`:
@@ -70,7 +100,7 @@ client.on('message', message => {
       )
       break
     case `${prefix}joke`:
-      getDadJoke()
+      getRandomDadJoke()
         .then(res => message.channel.send(res.data))
         .catch(apiError => console.log(apiError))
       break
@@ -84,9 +114,31 @@ client.on('message', message => {
         })
         .catch(dogApiError => console.log(dogApiError))
       break
-    case prefix:
-      message.channel.send(botIntroMessage)
+    case `${prefix}cat`:
+      getRandomCatImage()
+        .then(catRes => {
+          message.channel.send(catRes.data[0].url)
+        })
+        .catch(catApiError => console.log(catApiError))
       break
+    case `${prefix}fox`:
+      debugger
+      getRandomFoxImage()
+        .then(foxRes => {
+          message.channel.send(foxRes.data.image)
+        })
+        .catch(foxApiError => console.log(foxApiError))
+      break
+    case `${prefix}bird`:
+      debugger
+      message.channel.send('Still nothing for birds, sorry.')
+      break
+    case `${prefix}parakeet`:
+      debugger
+      message.channel.send('What made you want to search for parakeets?')
+      break
+    default:
+    message.channel.send(botHelpMessage)
   }
 })
 
@@ -104,9 +156,3 @@ client.on('guildMemberAdd', member => {
 
 // login to Discord with your app's token
 client.login(DISCORD_TOKEN)
-
-
-
-// TODOS
-// https://owlbot.info/?q=parrot
-// Animal/dictionary API to solve Alex's >parakeet nonsense. 
