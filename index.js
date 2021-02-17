@@ -20,7 +20,7 @@ const botHelpMessage = `**Command not found**
 \`>help\` - *Help command lists all available commands*
 `
 // Command list of all available commands.
-const helpCommandList = `**cenzo BOT** *help* 
+const helpCommandList = `**VinBot** *help* 
 
 **Command List**
 
@@ -35,8 +35,9 @@ const helpCommandList = `**cenzo BOT** *help*
 \`>fox\` - Shows a random Fox image
 
 `
-const dadJokeApiURL = 'https://icanhazdadjoke.com/'
 const dadJokeApiConfig = {
+  method: 'get',
+  url: 'https://icanhazdadjoke.com/',
   headers: {
     Accept: 'text/plain',
     'User-Agent': 'DiscBot - vinceshury@gmail.com'
@@ -50,10 +51,8 @@ const catApiConfig = {
     'x-api-key': '1f77677c-c2de-4771-be2f-e01439d1c5ce'
   }
 };
-// *Works In Progress*
 
-// Simple dad joke API
-const getRandomDadJoke = () => axios.get(dadJokeApiURL, dadJokeApiConfig)
+const getRandomDadJoke = () => axios(dadJokeApiConfig)
 const getRandomDogImage = () => axios.get('https://dog.ceo/api/breeds/image/random')
 const getRandomFoxImage = () => axios.get('https://randomfox.ca/floof/')
 const getRandomCatImage = () => axios(catApiConfig)
@@ -61,7 +60,6 @@ const getRandomCatImage = () => axios(catApiConfig)
 // Connect to the Discord
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`)
-
 })
 
 client.on('message', message => {
@@ -69,7 +67,8 @@ client.on('message', message => {
   const {bot: isAuthorBot, username} = message.author;
 
   // Don't do anything on messages from this bot.
-  if (username === 'cenzo') return;
+  console.log(username)
+  if (username === 'VinBot') return;
 
   console.log(
     `#${message.channel.name}
@@ -81,8 +80,9 @@ client.on('message', message => {
   // No further action if the message is from another bot.
   if (isAuthorBot === true) return;
   
-  
   const newMessage = message.content.toLowerCase().trim()
+
+  // No response if the message doesn't contain the command prefix
   if(newMessage[0] !== prefix) return;
 
   switch (newMessage) {
@@ -130,12 +130,16 @@ client.on('message', message => {
         .catch(foxApiError => console.log(foxApiError))
       break
     case `${prefix}bird`:
-      debugger
       message.channel.send('Still nothing for birds, sorry.')
       break
     case `${prefix}parakeet`:
-      debugger
       message.channel.send('What made you want to search for parakeets?')
+      break
+    case `${prefix}zoomcat`:
+    case `${prefix}zoom-cat`:
+    case `${prefix}zoom cat`:
+    case `${prefix}zcat`:
+      message.channel.send('https://youtu.be/TDNP-SWgn2w')
       break
     default:
     message.channel.send(botHelpMessage)
