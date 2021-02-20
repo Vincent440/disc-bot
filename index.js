@@ -47,7 +47,7 @@ const dadJokeApiConfig = {
 const catApiConfig = {
   method: 'get',
   url: 'https://api.thecatapi.com/v1/images/search',
-  headers: { 
+  headers: {
     'x-api-key': '1f77677c-c2de-4771-be2f-e01439d1c5ce'
   }
 };
@@ -64,85 +64,80 @@ client.on('ready', () => {
 
 client.on('message', message => {
 
-  const {bot: isAuthorBot, username} = message.author;
+  // Don't reply to bots or do anything without the command prefix
+  if (!message.content.startsWith(prefix) || message.author.bot) return;
 
-  // Don't do anything on messages from this bot.
-  console.log(username)
-  if (username === 'VinBot') return;
+  // Create an args variable that slices off the prefix entirely,
+  // & removes the leftover whitespaces and then splits it into an array by spaces.
+  const args = message.content.slice(prefix.length).trim().split(' ');
 
-  console.log(
-    `#${message.channel.name}
-      @${message.author.username}#${message.author.discriminator}`
-  )
-  console.log(message.cleanContent)
-  console.log('-'.repeat(20))
+  //  take the first element in array and store it in `command` while also removing it from the original array (so that you don't have the command name string inside the args array).
+  const command = args.shift().toLowerCase();
 
-  // No further action if the message is from another bot.
-  if (isAuthorBot === true) return;
-  
+
   const newMessage = message.content.toLowerCase().trim()
 
-  // No response if the message doesn't contain the command prefix
-  if(newMessage[0] !== prefix) return;
-
-  switch (newMessage) {
-    case `${prefix}help`:
+  switch (command) {
+    case 'args-info':
+      if (!args.length) {
+        return message.channel.send(`You didn't provide any arguments, ${message.author}!`);
+      }
+      message.channel.send(`Command name: ${command}\nArguments: ${args}`);
+      break
+    case `help`:
       message.channel.send(helpCommandList)
       break
-    case `${prefix}server`:
+    case `server`:
       message.channel.send(
         `Server name: ${message.guild.name}\nTotal members: ${message.guild.memberCount}`
       )
       break
-    case `${prefix}user-info`:
+    case `user-info`:
       message.channel.send(
         `Your username: ${message.author.username}\nYour ID: ${message.author.id}`
       )
       break
-    case `${prefix}joke`:
+    case `joke`:
       getRandomDadJoke()
         .then(res => message.channel.send(res.data))
         .catch(apiError => console.log(apiError))
       break
-    case `${prefix}avatar`:
+    case `avatar`:
       message.channel.send(message.author.displayAvatarURL())
       break
-    case `${prefix}dog`:
+    case `dog`:
       getRandomDogImage()
         .then(dogRes => {
           message.channel.send(dogRes.data.message)
         })
         .catch(dogApiError => console.log(dogApiError))
       break
-    case `${prefix}cat`:
+    case `cat`:
       getRandomCatImage()
         .then(catRes => {
           message.channel.send(catRes.data[0].url)
         })
         .catch(catApiError => console.log(catApiError))
       break
-    case `${prefix}fox`:
-      debugger
+    case `fox`:
       getRandomFoxImage()
         .then(foxRes => {
           message.channel.send(foxRes.data.image)
         })
         .catch(foxApiError => console.log(foxApiError))
       break
-    case `${prefix}bird`:
+    case `bird`:
       message.channel.send('Still nothing for birds, sorry.')
       break
-    case `${prefix}parakeet`:
+    case `parakeet`:
       message.channel.send('What made you want to search for parakeets?')
       break
-    case `${prefix}zoomcat`:
-    case `${prefix}zoom-cat`:
-    case `${prefix}zoom cat`:
-    case `${prefix}zcat`:
+    case `zoom-cat`:
+    case `zcat`:
       message.channel.send('https://youtu.be/TDNP-SWgn2w')
       break
     default:
-    message.channel.send(botHelpMessage)
+      message.channel.send(botHelpMessage)
   }
 })
 
