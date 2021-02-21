@@ -91,9 +91,9 @@ const handleMessage = (message) => {
     case "ping":
       client.commands.get("ping").execute(message, args);
       break;
-    // case `help`:
-    //   message.channel.send(helpCommandList);
-    //   break;
+    case `help`:
+      message.channel.send(helpCommandList);
+      break;
     case `server`:
       client.commands.get("server").execute(message, args);
       break;
