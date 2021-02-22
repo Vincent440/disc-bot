@@ -3,9 +3,6 @@
 // using .env to hide API keys and the Discord token
 require("dotenv").config();
 
-// Axios for simplfying API requests
-const axios = require("axios");
-
 // Using the file system to pull in the command files and dymanically create a command list
 const fs = require("fs");
 
@@ -20,109 +17,98 @@ const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
 
 // Create a new Discord client
 const client = new Discord.Client();
+const cooldowns = new Discord.Collection();
 
 // Create a new command collection (similar to JavaScript Maps)
 client.commands = new Discord.Collection();
 
-// Get all `.js` files from the `commands/` directory 
-const commandFiles = fs.readdirSync("./commands").filter((file) => file.endsWith(".js"));
+const commandFolders = fs.readdirSync("./commands");
 
-for (const file of commandFiles) {
-  // Gets all files from the commands folder.
-  const command = require(`./commands/${file}`);
+for (const folder of commandFolders) {
+  const commandFiles = fs.readdirSync(`./commands/${folder}`).filter((file) => file.endsWith(".js"));
 
-  // Set a new item in the collection
-  // with the key as the command name and the value as the exported module
-  client.commands.set(command.name, command);
+  for (const file of commandFiles) {
+    // Gets all files from the commands folder.
+    const command = require(`./commands/${folder}/${file}`);
+
+    // Set a new item in the collection
+    // with the key as the command name and the value as the exported module
+    client.commands.set(command.name, command);
+  }
 }
-
-// Response for empty prefixed messages.
-const botHelpMessage = `**Command not found**
-*Please see the list of available commands*
-
-**Example**
-\`>help\` - *Help command lists all available commands*`;
-
-// Command list of all available commands.
-const helpCommandList = `**VinBot** *help* 
-**Command List**
-
-*Examples*
-\`>server\` - Displays current server information
-\`>user\` - Displays username and ID
-\`>avatar\` - Displays your avatar
-
-\`>joke\` - Tells a random joke
-\`>dog\` - Shows a random Dog image
-\`>cat\` - Shows a random Cat image
-\`>fox\` - Shows a random Fox image`;
-
 
 /**
  * The message the BOT has access to respond to
  * @param {?string} message
  */
-
 const handleMessage = (message) => {
   // Don't reply to bots or do anything without the command prefix
   if (!message.content.startsWith(prefix) || message.author.bot) return;
 
   /**
    * Array of strings containing the *optional* `args`
-   * 
+   *
    * **Does not** include the `prefix` or `command`
    * @constant
    * @type {string[]}
    */
   const args = message.content.slice(prefix.length).trim().split(/ +/);
 
-
   /**
-   * The command the user inputs after the BOT prefix
+   * The name of the command the user inputs after the BOT prefix
    * @constant
    * @type {string}
    */
-  const command = args.shift().toLowerCase();
+  const commandName = args.shift().toLowerCase();
 
-  switch (command) {
-    case "args-info":
-      client.commands.get("args-info").execute(message, args);
-      break;
-    case "ping":
-      client.commands.get("ping").execute(message, args);
-      break;
-    case `help`:
-      message.channel.send(helpCommandList);
-      break;
-    case `server`:
-      client.commands.get("server").execute(message, args);
-      break;
-    case `user`:
-      client.commands.get("user").execute(message, args);
-      break;
-    case `joke`:
-      client.commands.get("joke").execute(message, args);
-      break;
-    case `avatar`:
-      client.commands.get("avatar").execute(message, args);
-      break;
-    case `dog`:
-      client.commands.get("dog").execute(message, args);
-      break;
-    case `cat`:
-      client.commands.get("cat").execute(message, args);
-      break;
-    case `fox`:
-      client.commands.get("fox").execute(message, args);
-      break;
-    case `bird`:
-      client.commands.get("bird").execute(message, args);
-      break;
-    case `parakeet`:
-      client.commands.get("parakeet").execute(message, args);
-      break;
-    default:
-      message.channel.send(botHelpMessage);
+  // If there isn't a command with that name, exit early.
+
+  if (!client.commands.has(commandName)) return;
+
+  const command =
+    client.commands.get(commandName) || client.commands.find((cmd) => cmd.aliases && cmd.aliases.includes(commandName));
+
+  if (command.serverOnly && message.channel.type === "dm") {
+    return message.reply("I can't execute that command inside a Direct Message!");
+  }
+
+  // If args is set to true in a command file, return
+  if (command.args && !args.length) {
+    let reply = `You didn't provide any arguments, ${message.author}!`;
+
+    if (command.usage) {
+      reply += `\nThe proper usage would be: \`${prefix}${command.name} ${command.usage}\``;
+    }
+
+    return message.channel.send(reply);
+  }
+
+  if (!cooldowns.has(command.name)) {
+    cooldowns.set(command.name, new Discord.Collection());
+  }
+
+  const now = Date.now();
+  const timestamps = cooldowns.get(command.name);
+  const cooldownAmount = (command.cooldown || 3) * 1000;
+
+  if (timestamps.has(message.author.id)) {
+    const expirationTime = timestamps.get(message.author.id) + cooldownAmount;
+
+    if (now < expirationTime) {
+      const timeLeft = (expirationTime - now) / 1000;
+      return message.reply(
+        `please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${command.name}\` command.`
+      );
+    }
+  }
+  timestamps.set(message.author.id, now);
+  setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
+
+  try {
+    command.execute(message, args);
+  } catch (error) {
+    console.error(error);
+    message.reply("There was an error trying to execute that command!");
   }
 };
 

@@ -5,7 +5,8 @@ const getRandomFoxImage = () => axios.get("https://randomfox.ca/floof/");
 
 module.exports = {
   name: "fox",
-  description: "\`>fox\` - Shows a random Fox image",
+  usage: '>fox',
+  description: "Shows a random Fox image",
   execute(message, args) {
     getRandomFoxImage()
       .then((foxRes) => {
