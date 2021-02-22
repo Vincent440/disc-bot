@@ -1,28 +1,20 @@
 "use strict";
-
-// using .env to hide API keys and the Discord token
 require("dotenv").config();
 
-// Using the file system to pull in the command files and dymanically create a command list
 const fs = require("fs");
-
-// Get the discord.js module
 const Discord = require("discord.js");
-
-// Grab the command prefix
 const { prefix } = require("./config.json");
+const commandFolders = fs.readdirSync("./commands");
 
-// Get the Discord API token from the `.env` file.
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
 
-// Create a new Discord client
 const client = new Discord.Client();
 const cooldowns = new Discord.Collection();
 
 // Create a new command collection (similar to JavaScript Maps)
 client.commands = new Discord.Collection();
 
-const commandFolders = fs.readdirSync("./commands");
+
 
 for (const folder of commandFolders) {
   const commandFiles = fs.readdirSync(`./commands/${folder}`).filter((file) => file.endsWith(".js"));
