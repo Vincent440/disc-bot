@@ -11,9 +11,9 @@ module.exports = {
     const { commands } = message.client;
 
     if (!args.length) {
-      data.push("Here's a list of all my commands:");
-      data.push(commands.map((command) => command.name).join("\n"));
-      data.push(`\nYou can send \`${prefix}help [command name]\` to get info on a specific command!`);
+      data.push("Here's a list of all my commands:\n");
+      data.push(commands.map((command) => command.name).join(" | "));
+      data.push(`\n**Send** \`${prefix}help [command name]\` **to learn more about a specific command**!`);
 
       return message.author
         .send(data, { split: true })
