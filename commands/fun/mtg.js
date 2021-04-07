@@ -16,12 +16,15 @@ module.exports = {
           // console.log(cardList)
           // console.log(cardList[0].name)
           message.channel.send(cardList[0]?.imageUrl ?? "No cards found, sorry try again!")
-        })
+        }).catch(mtgError => {
+          console.log(mtgError)
+        }
+        )
 
     }
 
     return message.channel.send("No cards found, please try a different search.");
   },
-  aliases: ["commands"],
+  // aliases: ["mtg","magic"],
   usage: "<card name>",
 };
