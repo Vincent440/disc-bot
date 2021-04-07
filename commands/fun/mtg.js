@@ -12,9 +12,10 @@ module.exports = {
     if (query) {
       return mtg.card.where({ name: query, pageSize: 1 })
         .then(cardList => {
-          console.log(cardList[0])
-          console.log(cardList[0].name)
-          message.channel.send(cardList[0].imageUrl)
+          // console.log(query)
+          // console.log(cardList)
+          // console.log(cardList[0].name)
+          message.channel.send(cardList[0]?.imageUrl ?? "No cards found, sorry try again!")
         })
 
     }
