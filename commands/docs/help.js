@@ -5,14 +5,14 @@ module.exports = {
   description: "List all of my commands or info about a specific command.",
   aliases: ["commands"],
   usage: "[command name]",
-  cooldown: 5,
+  cooldown: 2,
   execute(message, args) {
     const data = [];
     const { commands } = message.client;
 
     if (!args.length) {
       data.push("Here's a list of all my commands:\n");
-      data.push(commands.map((command) => command.name).join(" | "));
+      data.push(commands.map((command) => `\`${command.name}\``).join(" | "));
       data.push(`\n**Send** \`${prefix}help [command name]\` **to learn more about a specific command**!`);
 
       return message.author
