@@ -3,6 +3,3 @@ node_modules/
 package-lock.json
 
 .env
-
-# Ignore folder called dev in commands directory to save local dev only commands in.
-commands/dev

@@ -10,7 +10,6 @@ const eventFiles = fs.readdirSync('./events').filter(file => file.endsWith('.js'
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
 
 const client = new Discord.Client();
-const cooldowns = new Discord.Collection();
 
 client.commands = new Discord.Collection();
 
@@ -30,9 +29,9 @@ for (const folder of commandFolders) {
 for (const eventFile of eventFiles) {
 	const event = require(`./events/${eventFile}`);
 	if (event.once) {
-		client.once(event.name, (...args) => event.execute(...args));
+		client.once(event.name, (...args) => event.execute(...args, client));
 	} else {
-		client.on(event.name, (...args) => event.execute(...args));
+		client.on(event.name, (...args) => event.execute(...args, client));
 	}
 }
 
