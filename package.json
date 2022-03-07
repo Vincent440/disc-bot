@@ -5,7 +5,6 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "prettier-standard --format",
     "start": "node index.js",
     "dev": "nodemon index.js",
     "d": "npm run dev"
@@ -14,13 +13,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "axios": "^0.21.1",
+    "axios": "^0.21.4",
     "discord.js": "^12.5.3",
-    "dotenv": "^8.2.0",
+    "dotenv": "^8.6.0",
     "mtgsdk": "^0.4.3"
   },
   "devDependencies": {
-    "nodemon": "^2.0.7",
-    "prettier-standard": "^16.4.1"
+    "nodemon": "^2.0.15"
   }
 }
