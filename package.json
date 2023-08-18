@@ -19,6 +19,6 @@
     "mtgsdk": "^0.4.3"
   },
   "devDependencies": {
-    "nodemon": "^2.0.15"
+    "nodemon": "^3.0.1"
   }
 }
