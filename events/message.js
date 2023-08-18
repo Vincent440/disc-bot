@@ -3,7 +3,7 @@ const cooldowns = new Discord.Collection();
 const { prefix } = require("../config.json");
 
 module.exports = {
-  name: 'message',
+  name: 'messageCreate',
   execute(message) {
     // Don't reply to bots or do anything without the command prefix
     if (!message.content.startsWith(prefix) || message.author.bot) return;
@@ -30,7 +30,7 @@ module.exports = {
     const command =
       message.client.commands.get(commandName) || message.client.commands.find((cmd) => cmd.aliases && cmd.aliases.includes(commandName));
 
-    if (command.serverOnly && message.channel.type === "dm") {
+    if (command.serverOnly && message.channel.type === "DM") {
       return message.reply("I can't execute that command inside a Direct Message!");
     }
 
