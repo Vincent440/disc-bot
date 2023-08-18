@@ -15,7 +15,7 @@
   "dependencies": {
     "axios": "^1.4.0",
     "discord.js": "^12.5.3",
-    "dotenv": "^8.6.0",
+    "dotenv": "^16.3.1",
     "mtgsdk": "^0.4.3"
   },
   "devDependencies": {
