@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "d": "npm run dev"
+    "d": "npm run dev",
+    "lint": "standard --fix"
   },
   "keywords": [],
   "author": "",
@@ -22,6 +23,7 @@
     "mtgsdk": "^1.0.0"
   },
   "devDependencies": {
-    "nodemon": "^3.0.1"
+    "nodemon": "^3.0.1",
+    "standard": "^17.1.0"
   }
 }
