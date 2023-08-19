@@ -1,7 +1,7 @@
 {
   "name": "disc-bot",
-  "version": "2.0.0",
-  "description": "A really basic discord bot. Uses discord.js v13",
+  "version": "3.0.0",
+  "description": "A really basic discord bot. Uses discord.js v14",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -15,11 +15,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@discordjs/builders": "^1.6.5",
-    "@discordjs/rest": "^2.0.1",
     "axios": "^1.4.0",
-    "discord-api-types": "^0.37.54",
-    "discord.js": "^13.16.0",
+    "discord.js": "^14.13.0",
     "dotenv": "^16.3.1",
     "mtgsdk": "^1.0.0"
   },
