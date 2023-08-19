@@ -1,8 +1,8 @@
 'use strict'
 require('dotenv').config()
 
-const { REST } = require('@discordjs/rest')
-const { Routes } = require('discord-api-types/v9')
+const { REST, Routes } = require('discord.js')
+
 const fs = require('node:fs')
 const path = require('node:path')
 

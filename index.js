@@ -5,16 +5,21 @@ const fs = require('fs')
 const path = require('node:path')
 
 // Require the necessary discord.js classes
-const { Client, Collection, Intents } = require('discord.js')
-
+const {
+  Client,
+  Collection,
+  GatewayIntentBits,
+  Partials
+} = require('discord.js')
 const { DISCORD_TOKEN } = process.env
 
 const eventsPath = path.join(__dirname, 'events')
 const eventFiles = fs
   .readdirSync(eventsPath)
   .filter(file => file.endsWith('.js'))
+
 // Create a new client instance
-const client = new Client({ intents: [Intents.FLAGS.GUILDS] })
+const client = new Client({ intents: [GatewayIntentBits.Guilds], partials: [Partials.Channel] })
 
 client.commands = new Collection()
 

@@ -1,5 +1,5 @@
 const axios = require('axios')
-const { SlashCommandBuilder } = require('@discordjs/builders')
+const { SlashCommandBuilder } = require('discord.js')
 
 const getRandomDadJoke = () =>
   axios({
