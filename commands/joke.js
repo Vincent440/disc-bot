@@ -1,4 +1,5 @@
 const axios = require('axios')
+const { SlashCommandBuilder } = require('@discordjs/builders')
 
 const getRandomDadJoke = () =>
   axios({
@@ -11,14 +12,15 @@ const getRandomDadJoke = () =>
   })
 
 module.exports = {
-  name: 'joke',
-  description: '`>joke` - Tells a random joke',
-  execute (message, args) {
-    getRandomDadJoke()
-      .then(res => message.channel.send(res.data))
+  data: new SlashCommandBuilder()
+    .setName('joke')
+    .setDescription('Tells a random joke, from the icanhazdadjoke API.'),
+  async execute (interaction) {
+    await getRandomDadJoke()
+      .then(res => interaction.reply(res.data))
       .catch(apiError => {
         console.log(apiError)
-        return message.channel.send(
+        return interaction.reply(
           'Sorry there was an error retrieving dad joke, please try again later'
         )
       })

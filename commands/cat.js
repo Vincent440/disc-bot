@@ -1,4 +1,5 @@
 const axios = require('axios')
+const { SlashCommandBuilder } = require('@discordjs/builders')
 
 const getRandomCatImage = () =>
   axios({
@@ -10,20 +11,17 @@ const getRandomCatImage = () =>
   })
 
 module.exports = {
-  name: 'cat',
-  description: '`>cat` - Shows a random Cat image',
-  execute (message, args) {
-    if (args[0] === 'zoom') {
-      return message.channel.send('https://youtu.be/TDNP-SWgn2w')
-    }
-
-    getRandomCatImage()
+  data: new SlashCommandBuilder()
+    .setName('cat')
+    .setDescription('Shows a random Cat image'),
+  async execute (interaction) {
+    await getRandomCatImage()
       .then(catRes => {
-        return message.channel.send(catRes.data[0].url)
+        return interaction.reply(catRes.data[0].url)
       })
       .catch(catApiError => {
         console.log(catApiError)
-        return message.channel.send(
+        return interaction.reply(
           'Sorry there was an error retrieving the cat image. \nPlease try again later!'
         )
       })
