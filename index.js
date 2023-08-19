@@ -9,8 +9,10 @@ const { Client, Collection, Intents } = require('discord.js')
 
 const { DISCORD_TOKEN } = process.env
 
-// const eventFiles = fs.readdirSync('./events').filter((file) => file.endsWith('.js'))
-
+const eventsPath = path.join(__dirname, 'events')
+const eventFiles = fs
+  .readdirSync(eventsPath)
+  .filter(file => file.endsWith('.js'))
 // Create a new client instance
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] })
 
@@ -28,19 +30,16 @@ for (const file of commandFiles) {
   // With the key as the command name and the value as the exported module
   client.commands.set(command.data.name, command)
 }
-// for (const eventFile of eventFiles) {
-//   const event = require(`./events/${eventFile}`)
-//   if (event.once) {
-//     client.once(event.name, (...args) => event.execute(...args, client))
-//   } else {
-//     client.on(event.name, (...args) => event.execute(...args, client))
-//   }
-// }
 
-// When the client is ready, run this code (only once)
-client.once('ready', () => {
-  console.log('VinBot#9905 is Ready!')
-})
+for (const file of eventFiles) {
+  const filePath = path.join(eventsPath, file)
+  const event = require(filePath)
+  if (event.once) {
+    client.once(event.name, (...args) => event.execute(...args, client))
+  } else {
+    client.on(event.name, (...args) => event.execute(...args, client))
+  }
+}
 
 // Listen for interactions
 client.on('interactionCreate', async interaction => {
