@@ -27,6 +27,7 @@ Example command that responds with a random dad joke from [icanhazdadjoke.com](h
 
     ```
     DISCORD_TOKEN='super-secret-one-time-token'
+    CLIENT_ID='discord-bot-application-id'
     ```
 
 1. Install any dependencies using NPM `npm i`

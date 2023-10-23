@@ -9,6 +9,7 @@ const {
   Client,
   Collection,
   GatewayIntentBits,
+  Events,
   Partials
 } = require('discord.js')
 const { DISCORD_TOKEN } = process.env
@@ -19,7 +20,10 @@ const eventFiles = fs
   .filter(file => file.endsWith('.js'))
 
 // Create a new client instance
-const client = new Client({ intents: [GatewayIntentBits.Guilds], partials: [Partials.Channel] })
+const client = new Client({
+  intents: [GatewayIntentBits.Guilds],
+  partials: [Partials.Channel]
+})
 
 client.commands = new Collection()
 
@@ -47,21 +51,31 @@ for (const file of eventFiles) {
 }
 
 // Listen for interactions
-client.on('interactionCreate', async interaction => {
-  if (!interaction.isCommand()) return
+client.on(Events.InteractionCreate, async interaction => {
+  if (!interaction.isChatInputCommand()) return
 
-  const command = client.commands.get(interaction.commandName)
+  const command = interaction.client.commands.get(interaction.commandName)
 
-  if (!command) return
+  if (!command) {
+    console.error(`No command matching ${interaction.commandName} was found.`)
+    return
+  }
 
   try {
     await command.execute(interaction)
   } catch (error) {
     console.error(error)
-    await interaction.reply({
-      content: 'There was an error while executing this command!',
-      ephemeral: true
-    })
+    if (interaction.replied || interaction.deferred) {
+      await interaction.followUp({
+        content: 'There was an error while executing this command!',
+        ephemeral: true
+      })
+    } else {
+      await interaction.reply({
+        content: 'There was an error while executing this command!',
+        ephemeral: true
+      })
+    }
   }
 })
 

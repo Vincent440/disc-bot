@@ -1,5 +1,8 @@
+// When the client is ready, run this code (only once)
+const { Events } = require('discord.js')
+
 module.exports = {
-  name: 'guildMemberAdd',
+  name: Events.GuildMemberAdd,
   execute (member) {
     // Send the message to a designated channel on a server:
     const channel = member.guild.channels.cache.find(
