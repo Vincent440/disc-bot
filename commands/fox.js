@@ -1,7 +1,14 @@
-const axios = require('axios')
 const { SlashCommandBuilder } = require('discord.js')
 
-const getRandomFoxImage = () => axios.get('https://randomfox.ca/floof/')
+const API_URL = 'https://randomfox.ca/flo/'
+
+const getRandomFoxImage = async () => {
+  return fetch(API_URL).then(response => {
+    return response.json()
+  }).then(responseData => {
+    return responseData
+  })
+}
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -9,11 +16,11 @@ module.exports = {
     .setDescription('Shows a random Fox image. Awe look how cute they are!'),
   async execute (interaction) {
     await getRandomFoxImage()
-      .then(foxRes => {
-        return interaction.reply(foxRes.data.image)
+      .then(data => {
+        return interaction.reply(data.image)
       })
       .catch(foxApiError => {
-        console.log(foxApiError)
+        console.error(foxApiError)
         return interaction.reply(
           'Sorry there was an error retrieving the fox image. \nPlease try again later!'
         )
