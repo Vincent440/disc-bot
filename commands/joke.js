@@ -1,4 +1,3 @@
-// const axios = require('axios')
 const { SlashCommandBuilder } = require('discord.js')
 
 const API_URL = 'https://icanhazdadjoke.com/'
@@ -20,7 +19,7 @@ const getRandomDadJoke = () => {
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('joke')
-    .setDescription('Tells a random joke, from the icanhazdadjoke API.'),
+    .setDescription('Tells a random joke, from: https://icanhazdadjoke.com/ '),
   async execute (interaction) {
     await getRandomDadJoke()
       .then(data => interaction.reply(data.joke))
