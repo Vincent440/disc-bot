@@ -46,24 +46,5 @@ for (const file of eventFiles) {
   }
 }
 
-// Listen for interactions
-client.on('interactionCreate', async interaction => {
-  if (!interaction.isCommand()) return
-
-  const command = client.commands.get(interaction.commandName)
-
-  if (!command) return
-
-  try {
-    await command.execute(interaction)
-  } catch (error) {
-    console.error(error)
-    await interaction.reply({
-      content: 'There was an error while executing this command!',
-      ephemeral: true
-    })
-  }
-})
-
 // login to Discord with your app's token
 client.login(DISCORD_TOKEN)
