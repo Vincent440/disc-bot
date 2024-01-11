@@ -1,14 +1,19 @@
-const axios = require('axios')
 const { SlashCommandBuilder } = require('discord.js')
 
-const getRandomCatImage = () =>
-  axios({
-    method: 'get',
-    url: 'https://api.thecatapi.com/v1/images/search',
-    headers: {
-      'x-api-key': '1f77677c-c2de-4771-be2f-e01439d1c5ce'
-    }
-  })
+const API_URL = 'https://api.thecatapi.com/v1/images/search'
+
+const requestOptions = {
+  method: 'GET',
+  headers: {
+    'x-api-key': process.env.CAT_API_KEY
+  }
+}
+
+const getRandomCatImage = () => {
+  return fetch(API_URL, requestOptions)
+    .then(response => response.json())
+    .then(responseData => responseData)
+}
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -16,8 +21,8 @@ module.exports = {
     .setDescription('Shows a random Cat image'),
   async execute (interaction) {
     await getRandomCatImage()
-      .then(catRes => {
-        return interaction.reply(catRes.data[0].url)
+      .then(data => {
+        return interaction.reply(data[0].url)
       })
       .catch(catApiError => {
         console.log(catApiError)
