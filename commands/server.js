@@ -8,8 +8,9 @@ module.exports = {
     )
     .setDMPermission(false),
   async execute (interaction) {
+    // interaction.guild is the object representing the Guild in which the command was run
     await interaction.reply(
-      `Server name: ${interaction.guild.name}\nTotal members: ${interaction.user.id}`
+      `This server is ${interaction.guild.name} and it currently has ${interaction.guild.memberCount} members.`
     )
   }
 }
