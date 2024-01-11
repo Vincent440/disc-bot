@@ -1,13 +1,11 @@
 const { SlashCommandBuilder } = require('discord.js')
 
-const API_URL = 'https://randomfox.ca/flo/'
+const API_URL = 'https://randomfox.ca/floof/'
 
 const getRandomFoxImage = async () => {
-  return fetch(API_URL).then(response => {
-    return response.json()
-  }).then(responseData => {
-    return responseData
-  })
+  return fetch(API_URL)
+    .then(response => response.json())
+    .then(responseData => responseData)
 }
 
 module.exports = {
