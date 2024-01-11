@@ -1,8 +1,12 @@
-const axios = require('axios')
 const { SlashCommandBuilder } = require('discord.js')
 
-const getRandomDogImage = () =>
-  axios.get('https://dog.ceo/api/breeds/image/random')
+const API_URL = 'https://dog.ceo/api/breeds/image/random'
+
+const getRandomDogImage = () => {
+  return fetch(API_URL)
+    .then(response => response.json())
+    .then(responseData => responseData)
+}
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -10,11 +14,11 @@ module.exports = {
     .setDescription('Shows a random Dog image.'),
   async execute (interaction) {
     await getRandomDogImage()
-      .then(dogRes => {
-        return interaction.reply(dogRes.data.message)
+      .then(data => {
+        return interaction.reply(data.message)
       })
       .catch(dogApiError => {
-        console.log(dogApiError)
+        console.err(dogApiError)
         return interaction.reply(
           'Sorry there was an error retrieving the dog image. \nPlease try again later!'
         )
